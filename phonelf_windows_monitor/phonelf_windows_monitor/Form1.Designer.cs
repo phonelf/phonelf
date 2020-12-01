@@ -248,10 +248,11 @@
             this.renewTI.Size = new System.Drawing.Size(120, 22);
             this.renewTI.TabIndex = 11;
             this.renewTI.Value = new decimal(new int[] {
-            10,
+            5,
             0,
             0,
             0});
+            this.renewTI.ValueChanged += new System.EventHandler(this.renewTI_ValueChanged);
             // 
             // noap
             // 

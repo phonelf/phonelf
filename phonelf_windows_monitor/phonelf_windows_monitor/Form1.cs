@@ -24,6 +24,9 @@ namespace phonelf_windows_monitor
         int[] hhmmss = { 0, 0, 0, 0, 0, 0 };
         public int[] dai = { 0, 0, 0, 0 };
         public string das = "NP";
+        public static string buff_back_send_hdd = "";
+        public static string file_des_text;
+
 
         public Form1()
         {
@@ -37,7 +40,8 @@ namespace phonelf_windows_monitor
             server.Delimiter = 0x13;//enter
             server.StringEncoder = Encoding.UTF8;
             server.DataReceived += Server_DataReceived;
-            file_des.Text = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);/*預設路徑*/
+            file_des.Text = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)+@"\phonelf_log.txt";/*預設路徑*/
+            file_des_text = file_des.Text;
         }
 
         //timmer
@@ -66,7 +70,8 @@ namespace phonelf_windows_monitor
             if (able_time_new.Checked){
                 if (count_renew_time >= renewTI.Value)
                 {
-                    conS.Text = "";
+                    //conS.Text = "";
+                    constextEQnull();
                     count_renew_time = 0;
                 }
                 else
@@ -383,7 +388,7 @@ namespace phonelf_windows_monitor
         {
             if (use_local_ip.Checked)
             {
-
+                ipSHOW.Text = get_local_ip();
             }
             else
             {
@@ -451,11 +456,76 @@ namespace phonelf_windows_monitor
         private void file_sel_Click(object sender, EventArgs e)
         {
             file_des.Text = OpenFile();
+            file_des_text = file_des.Text;
+
         }
 
         /*TODO:
          * 多執行敘後送
-         * cmd ip check
          */
+
+        public string get_local_ip()
+        {
+            string hostName = Dns.GetHostName(); // Retrive the Name of HOST  
+            Console.WriteLine(hostName);
+            // Get the IP  
+            string myIP = Dns.GetHostByName(hostName).AddressList[0].ToString();
+            Console.WriteLine("My IP Address is :" + myIP);
+            //Console.ReadKey();
+            return myIP;
+        }
+
+        private void renewTI_ValueChanged(object sender, EventArgs e)
+        {
+            //no move
+        }
+
+        private void constextEQnull()
+        {
+            if (BOOLhdd.Checked)
+            {
+                buff_back_send_hdd = conS.Text;
+            }
+            else
+            {
+
+            }
+
+            conS.Text = "";
+            if (BOOLhdd.Checked)
+            {
+                Thread t1 = new Thread(WriteBack);
+                t1.Start();
+            }
+            else
+            {
+
+            }
+
+            }
+
+
+        public static void WriteBack()
+        {
+
+            string FileName = file_des_text;
+            if (System.IO.File.Exists(FileName))
+            {
+                using (StreamWriter sw = File.AppendText(FileName))
+                {
+                    sw.WriteLine(buff_back_send_hdd);
+                }
+            }
+            else
+            {
+                using (StreamWriter sw = File.AppendText(FileName))
+                {
+                    sw.WriteLine(buff_back_send_hdd);
+                }
+            }
+            
+        }
+
+
     }
 }
